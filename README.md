@@ -7,7 +7,7 @@ package main
 
 import (
 	"fmt"
-	"github.com/donke/pdconv"
+	"github.com/kuked/pdconv"
 )
 
 func main() {
@@ -16,12 +16,18 @@ func main() {
 		panic(err)
 	}
 	fmt.Println(i)
+
+    b, err := pdconv.Itop(i, 3)
+    if err != nil {
+        panic(err)
+    }
+    fmt.Printf("%x\n", b)
 }
 ```
 
 ## Installation
 ```
-$ go get github.com/donke/pdconv
+$ go get github.com/kuked/pdconv
 ```
 
 ## License
@@ -30,4 +36,4 @@ MIT
 
 ## Author
 
-Ken Kudo (aka.kudoken@gmail.com)
+Ken Kudo
