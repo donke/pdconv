@@ -65,17 +65,11 @@ func Itop(x int, nb int) ([]byte, error) {
 }
 
 func isDigit(i int) bool {
-	if i >= 0x00 && i <= 0x09 {
-		return true
-	}
-	return false
+	return i >= 0x00 && i <= 0x09
 }
 
 func isSign(i int) bool {
-	if i == 0x0C || i == 0x0D {
-		return true
-	}
-	return false
+	return i == 0x0C || i == 0x0D
 }
 
 func applySign(i int) int {
