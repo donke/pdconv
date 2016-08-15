@@ -6,43 +6,42 @@ import (
 )
 
 const (
-	lowNibble  = 0x0f
-	highNibble = 0xf0
+	highMask = 0xf0
+	lowMask  = 0x0f
 )
 
 var errSyntax = errors.New("invalid syntax")
 
-// Ptoi converts the packed decimal bytes to a int value.
+// Ptoi interprets a bs the packed decimal bytes in the base 10 and returns the value.
 func Ptoi(bs []byte) (int, error) {
 	if len(bs) == 0 {
 		return 0, errSyntax
 	}
 
-	n := 0
-	for i, b := range bs {
-		high := (int(b) & highNibble) >> 4
-		if isDigit(high) != true {
-			return 0, errSyntax
-		}
-		n = n*10 + high
+	var hi, lo, n int
 
-		low := int(b) & lowNibble
-		if i == len(bs)-1 {
-			if isSign(low) {
-				return n * applySign(low), nil
-			}
+	for i := 0; i < len(bs); i++ {
+		hi = (int(bs[i]) & highMask) >> 4
+		if !isDigit(hi) {
 			return 0, errSyntax
 		}
-		if isDigit(low) != true {
+		n = n*10 + hi
+
+		lo = int(bs[i]) & lowMask
+		if !isDigit(lo) && !isSign(lo) {
 			return 0, errSyntax
 		}
-		n = n*10 + low
+		if isDigit(lo) {
+			n = n*10 + lo
+		}
 	}
-
-	return 0, errSyntax
+	if !isSign(lo) {
+		return 0, errSyntax
+	}
+	return n * applySign(lo), nil
 }
 
-// Itop converts the int to packed decimal bytes.
+// Itop returns the packed decimal bytes of x in the given base 10.
 func Itop(x int, nb int) ([]byte, error) {
 	if len(fmt.Sprintf("%d", abs(x))) > nb*2-1 {
 		return nil, errSyntax
